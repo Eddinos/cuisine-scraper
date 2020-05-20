@@ -20,7 +20,7 @@ def index(request):
         for i in ingredients:
             x = re.findall("[0-9]+", i.text)
             y = re.findall("[a-zA-ZÀ-ú]{3,}", i.text)
-            result['ingredients'].append({ "value": x, "label": y })
+            result['ingredients'].append({ "value": x, "label": y, 'raw': i.text })
     for x in soup.find('div', attrs={'class': 'recipe--header'}):
         if (x.find('h1') != -1):
             result['title'] = x.find('h1').text
