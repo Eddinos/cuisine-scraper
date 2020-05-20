@@ -1,0 +1,4 @@
+django
+re
+beautifulsoup4
+requests
