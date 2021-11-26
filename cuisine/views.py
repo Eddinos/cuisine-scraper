@@ -6,7 +6,7 @@ import re
 def index(request):
     url = request.GET.get('url', '')
 
-    source = requests.get(url).text
+    source = requests.get(url, verify=False).text
 
     result = {
         'title': '',
