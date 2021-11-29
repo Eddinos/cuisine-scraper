@@ -15,12 +15,20 @@ def index(request):
 
     soup = BeautifulSoup(source, features="html.parser")
 
-    for a in soup.findAll('div', attrs={'class': 'recipe-detail-live-ingredient'}):
-        ingredients = a.findAll('v-list-item__title:not(.primary--text)')
-        for i in ingredients:
-            x = re.findall("[0-9]+", i.text)
-            y = re.findall("[a-zA-ZÀ-ú]{3,}", i.text)
-            result['ingredients'].append({ "value": x, "label": y, 'raw': i.text })
-    for x in soup.find('span', attrs={'class': 'recipe-title'}):
-        result['title'] = x.find('h1').text
-    return JsonResponse(result, safe=False)
+    ajaxUrl = "https://fr.monsieur-cuisine.com/wp-admin/admin-ajax.php"
+
+    body = soup.find('body')
+    bodyClassList = body['class']
+    recipeId = ""
+
+    for className in bodyClassList:
+        if re.search("postid", className):
+            recipeId = className.replace("postid-", "")
+
+    res = requests.post(ajaxUrl, data={"action": "load_recipe_post", "recipe_id": recipeId}, verify=False).json()
+    for ingredient in res['recipe']['serving_sizes'][0]['ingredients']:
+        x = re.findall("[0-9]+", ingredient['name'])
+        y = re.findall("[a-zA-ZÀ-ú]{3,}", ingredient['name'])
+        result['ingredients'].append({ "value": x, "label": y, 'raw': ingredient['name'] })
+
+    result['title'] = res['recipe']['title']
