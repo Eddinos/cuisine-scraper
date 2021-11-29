@@ -32,3 +32,5 @@ def index(request):
         result['ingredients'].append({ "value": x, "label": y, 'raw': ingredient['name'] })
 
     result['title'] = res['recipe']['title']
+    return JsonResponse(result, safe=False)
+
